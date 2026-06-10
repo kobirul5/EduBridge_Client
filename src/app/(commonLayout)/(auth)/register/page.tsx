@@ -3,11 +3,9 @@
 import RegistrationForm from "@/components/registration-form";
 import Link from "next/link";
 import { LucideArrowRight } from "lucide-react";
-import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
-// Dynamically import Lottie to avoid SSR issues
 const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 const LOTTIE_URL = "/Login.json";
@@ -23,84 +21,73 @@ export default function RegisterPage() {
   }, []);
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-background relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]" />
+    <main className="min-h-screen bg-[linear-gradient(180deg,var(--background),var(--secondary))] px-4 py-8 text-foreground sm:px-6 lg:px-8">
+      <div className="mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-6xl overflow-hidden border border-border/70 bg-card/70 shadow-[0_24px_70px_-48px_color-mix(in_oklch,var(--primary)_45%,transparent)] backdrop-blur lg:grid-cols-[0.92fr_1.08fr]">
+        <section className="hidden min-h-[720px] flex-col justify-between border-r border-border/70 bg-secondary/30 p-10 lg:flex">
+          <div className="max-w-md space-y-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+              EduBridge
+            </p>
+            <h1 className="text-4xl font-semibold leading-tight tracking-tight">
+              Create a profile built for steady progress.
+            </h1>
+            <p className="text-base leading-7 text-muted-foreground">
+              Set up your account once, then move between learning, users, and dashboard tools without friction.
+            </p>
+          </div>
 
-      <div className="container max-w-6xl mx-auto px-4 py-8 z-10">
-        <div className="grid lg:grid-cols-2 gap-0 overflow-hidden bg-card/40 backdrop-blur-3xl border border-border/40 rounded-[40px] shadow-2xl shadow-primary/5 min-h-[700px]">
-          
-          {/* Left Column - Animation */}
-          <div className="hidden lg:flex flex-col justify-between p-12 bg-primary/5 relative overflow-hidden border-r border-border/50">
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-10 translate-y-[-10px] animate-in fade-in slide-in-from-top-2 duration-700">
-                <Link href="/" className="flex items-center gap-2">
-                  <Image src="/assets/logo.png" alt="EduBridge Logo" width={100} height={40} className="h-12 w-auto" />
-                  <span className="text-3xl font-black tracking-tighter text-foreground italic drop-shadow-sm">
-                    EduBridge
-                  </span>
-                </Link>
-              </div>
-              
-              <div className="space-y-6 max-w-md animate-in fade-in slide-in-from-left-4 duration-1000 delay-200">
-                <h1 className="text-5xl font-black leading-[1.1] tracking-tight text-foreground">
-                  Your Journey <span className="text-primary">Starts Here</span>.
-                </h1>
-                <p className="text-xl text-muted-foreground/80 font-medium leading-relaxed">
-                  Join a community built on trust, transparency, and the magic of genuine interaction.
-                </p>
-              </div>
-            </div>
-
-            <div className="relative h-[400px] w-full mt-auto flex items-center justify-center animate-in fade-in zoom-in-95 duration-1000 delay-500">
+          <div className="relative flex min-h-[360px] items-center justify-center">
+            <div className="absolute inset-x-10 bottom-4 h-24 bg-primary/10 blur-3xl" />
+            <div className="relative h-[360px] w-full">
               {animationData ? (
-                <Lottie 
-                  animationData={animationData} 
-                  loop={true} 
-                  className="w-full h-full"
+                <Lottie
+                  animationData={animationData}
+                  loop={true}
+                  className="h-full w-full"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                <div className="flex h-full w-full items-center justify-center">
+                  <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary/20 border-t-primary" />
                 </div>
               )}
             </div>
-
-            {/* Abstract Decorative Circle */}
-            <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl opacity-50" />
           </div>
 
-          {/* Right Column - Registration Form */}
-          <div className="flex flex-col justify-center p-8 lg:p-12 bg-card/10 overflow-y-auto">
-            <div className="w-full max-w-lg mx-auto space-y-8 animate-in fade-in slide-in-from-right-4 duration-1000 delay-300">
-              <div className="space-y-3">
-                <h2 className="text-4xl font-extrabold tracking-tight text-foreground">
-                  Create Account
-                </h2>
-                <p className="text-lg text-muted-foreground font-semibold">
-                  Join the circle of genuine connections.
-                </p>
-              </div>
+          <div className="border border-border/70 bg-card/70 p-5">
+            <p className="text-sm font-semibold">One account, clear access</p>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              Your profile information stays aligned with the dashboard and protected routes.
+            </p>
+          </div>
+        </section>
 
-              <RegistrationForm />
+        <section className="flex items-center justify-center p-6 sm:p-10">
+          <div className="w-full max-w-2xl space-y-8">
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-primary">Get started</p>
+              <h2 className="text-3xl font-semibold tracking-tight">Create your account</h2>
+              <p className="text-sm leading-6 text-muted-foreground">
+                Add the basics now. You can refine the rest later.
+              </p>
+            </div>
 
-              <div className="pt-6 border-t border-border/50 text-center">
-                <p className="text-sm text-muted-foreground font-semibold">
-                  Already a member?{" "}
-                  <Link 
-                    href="/login" 
-                    className="text-primary font-black hover:underline inline-flex items-center gap-1 group transition-all"
-                  >
-                    Welcome Back
-                    <LucideArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </p>
-              </div>
+            <RegistrationForm />
+
+            <div className="border-t border-border/70 pt-6 text-center">
+              <p className="text-sm font-medium text-muted-foreground">
+                Already have an account?{" "}
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
+                >
+                  Sign in
+                  <LucideArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+                </Link>
+              </p>
             </div>
           </div>
-        </div>
+        </section>
       </div>
-    </div>
+    </main>
   );
 }

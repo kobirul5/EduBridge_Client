@@ -15,8 +15,7 @@ export default function Navbar({ user }: { user: NavbarUser }) {
     <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between gap-4 px-4">
         <div className="flex min-w-0 items-center">
-        <Link href="/" className="flex items-center gap-2">
-          <Image src="/assets/logo.png" alt="EduBridge Logo" width={100} height={40} className="h-10 w-auto" />
+        <Link href="/" className="flex items-center">
           <span className="text-lg font-semibold text-primary">EduBridge</span>
         </Link>
         </div>
