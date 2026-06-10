@@ -1,4 +1,4 @@
-export type UserRole = "ADMIN" | "USER";
+export type UserRole = "ADMIN" | "STUDENT" | "TUTOR";
 
 // exact : ["/my-profile", "settings"]
 //   patterns: [/^\/dashboard/, /^\/user/], // Routes starting with /dashboard/* /user/*
@@ -17,7 +17,7 @@ export const publicRoutes = [
 ];
 
 export const commonProtectedRoutes: RouteConfig = {
-    exact: ["/my-profile", "/settings"],
+    exact: ["/my-profile", "/settings", "/profile"],
     patterns: [],
 }
 
@@ -64,8 +64,11 @@ export const getDefaultDashboardRoute = (role: UserRole): string => {
     if (role === "ADMIN") {
         return "/admin/dashboard";
     }
-    if (role === "USER") {
-        return "/";
+    if (role === "STUDENT") {
+        return "/dashboard/student";
+    }
+    if (role === "TUTOR") {
+        return "/dashboard/tutor";
     }
     return "/";
 }

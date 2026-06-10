@@ -2,109 +2,212 @@
 "use server"
 
 import z from "zod";
-import { parse } from "cookie";
 import { cookies } from "next/headers";
 
-const registerValidationZodSchema = z.object({
-    email: z.string().email({
-        message: "Invalid email address",
+// ── Base schema (shared by both roles) ─────────────────────────────────────
+const baseSchema = z.object({
+    email: z.string().email({ message: "Invalid email address" }),
+    role: z.enum(["STUDENT", "TUTOR"], {
+        error: () => ({ message: "Role must be STUDENT or TUTOR" }),
     }),
-    firstName: z.string().min(2, "First Name must be at least 2 characters").max(32, "First Name must be at most 32 characters"),
-    lastName: z.string().min(2, "Last Name must be at least 2 characters").max(32, "Last Name must be at most 32 characters").optional().or(z.literal("")),
+    password: z
+        .string()
+        .min(8, "Password must be at least 8 characters")
+        .max(32, "Password must be at most 32 characters"),
+    confirmPassword: z
+        .string()
+        .min(8, "Password must be at least 8 characters")
+        .max(32, "Password must be at most 32 characters"),
+
+    // Personal Info
+    fullName: z
+        .string()
+        .min(2, "Full name must be at least 2 characters")
+        .max(64, "Full name must be at most 64 characters"),
     phoneNumber: z.string().optional().or(z.literal("")),
-    address: z.string().optional().or(z.literal("")),
-    gender: z.enum(["MALE", "FEMALE", "OTHER", ""]).optional(),
-    age: z.string().optional().or(z.literal("")),
-    password: z.string().min(6, "Password must be at least 6 characters").max(32, "Password must be at most 32 characters"),
-    confirmPassword: z.string().min(6, "Password must be at least 6 characters").max(32, "Password must be at most 32 characters"),
-}).refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
+    gender: z.string().optional().or(z.literal("")),
+    city: z.string().optional().or(z.literal("")),
+    about: z.string().optional().or(z.literal("")),
+    education: z.string().optional().or(z.literal("")),
 });
+
+// ── Student schema ──────────────────────────────────────────────────────────
+const studentSchema = baseSchema.refine(
+    (data) => data.password === data.confirmPassword,
+    { message: "Passwords do not match", path: ["confirmPassword"] }
+);
+
+// ── Tutor schema (extends base with required tutor fields) ──────────────────
+const tutorSchema = baseSchema
+    .extend({
+        hourlyRate: z
+            .string()
+            .min(1, "Hourly rate is required for tutors")
+            .refine((v) => !isNaN(parseFloat(v)) && parseFloat(v) > 0, {
+                message: "Hourly rate must be a positive number",
+            }),
+        experience: z.string().optional().or(z.literal("")),
+        subject: z
+            .string()
+            .min(1, "At least one subject is required for tutors"),
+        availableDays: z
+            .string()
+            .min(1, "Available days are required for tutors"),
+        availableTime: z
+            .string()
+            .min(1, "Available time slots are required for tutors"),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+        message: "Passwords do not match",
+        path: ["confirmPassword"],
+    });
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
-
 export const registerUser = async (_currentState: any, formData: FormData): Promise<any> => {
     try {
+        const role = formData.get("role") as string;
+
         const rawData = {
-            email: formData.get("email"),
-            password: formData.get("password"),
-            confirmPassword: formData.get("confirmPassword"),
-            firstName: formData.get("firstName"),
-            lastName: formData.get("lastName"),
-            phoneNumber: formData.get("phoneNumber"),
-            address: formData.get("address"),
-            gender: formData.get("gender"),
-            age: formData.get("age"),
+            email: formData.get("email") as string,
+            role,
+            password: formData.get("password") as string,
+            confirmPassword: formData.get("confirmPassword") as string,
+            fullName: formData.get("fullName") as string,
+            phoneNumber: formData.get("phoneNumber") as string || "",
+            gender: formData.get("gender") as string || "",
+            city: formData.get("city") as string || "",
+            about: formData.get("about") as string || "",
+            education: formData.get("education") as string || "",
+            // Tutor-only
+            ...(role === "TUTOR" && {
+                hourlyRate: formData.get("hourlyRate") as string || "",
+                experience: formData.get("experience") as string || "",
+                subject: formData.get("subject") as string || "",
+                availableDays: formData.get("availableDays") as string || "",
+                availableTime: formData.get("availableTime") as string || "",
+            }),
         };
 
-        const validatedField = registerValidationZodSchema.safeParse(rawData);
+        // ── Validate with role-specific schema ──────────────────────────────
+        const schema = role === "TUTOR" ? tutorSchema : studentSchema;
+        const validated = schema.safeParse(rawData);
 
-        if (!validatedField.success) {
+        if (!validated.success) {
             return {
                 success: false,
-                errors: validatedField.error.issues.map((issue) => {
-                    return {
-                        field: issue.path[0],
-                        message: issue.message
-                    }
-                }),
-            }
+                errors: validated.error.issues.map((issue) => ({
+                    field: issue.path[0],
+                    message: issue.message,
+                })),
+            };
         }
 
-        const payload = {
-            email: rawData.email,
-            password: rawData.password,
-            firstName: rawData.firstName,
-            lastName: rawData.lastName,
-            phoneNumber: rawData.phoneNumber,
-            address: rawData.address,
-            gender: rawData.gender || undefined,
-            age: rawData.age ? parseInt(rawData.age as string) : undefined,
-        };
-
+        // ── STEP 1: Core registration (email + password + role) ─────────────
         const res = await fetch(`${BASE_URL}/users/register`, {
             method: "POST",
-            body: JSON.stringify(payload),
-            headers: {
-                "Content-Type": "application/json",
-            }
+            body: JSON.stringify({
+                email: rawData.email,
+                password: rawData.password,
+                role: rawData.role,
+            }),
+            headers: { "Content-Type": "application/json" },
         });
 
         const result = await res.json();
 
         if (!result.success) {
-            return result;
+            return { success: false, message: result.message || "Registration failed. Please try again." };
         }
 
-        // Handle cookies for session persistence
-        const cookieHeader = res.headers.getSetCookie();
-        const cookieStore = await cookies();
+        // Backend returns: { success: true, data: { newUser: {...}, token: "..." } }
+        const token: string | undefined = result.data?.token;
 
-        if (cookieHeader && cookieHeader.length > 0) {
-            cookieHeader.forEach((cookie) => {
-                const parsedCookie = parse(cookie);
-                const cookieName = Object.keys(parsedCookie)[0];
-                const cookieValue = parsedCookie[cookieName];
+        // ── STEP 2: Profile update with role-aware fields ───────────────────
+        if (token) {
+            const profilePayload: Record<string, any> = {};
 
-                if ((cookieName === "accessToken" || cookieName === "refreshToken") && cookieValue) {
-                    cookieStore.set(cookieName as string, cookieValue, {
-                        httpOnly: true,
-                        path: parsedCookie.path || "/",
-                        maxAge: parsedCookie['Max-Age'] ? parseInt(parsedCookie['Max-Age']) : undefined,
-                        expires: parsedCookie.expires ? new Date(parsedCookie.expires) : undefined,
-                        secure: process.env.NODE_ENV === "production",
-                        sameSite: (parsedCookie.sameSite as any) || "lax",
-                    });
+            // Shared fields for both roles
+            if (rawData.fullName)    profilePayload.fullName    = rawData.fullName;
+            if (rawData.phoneNumber) profilePayload.phoneNumber = rawData.phoneNumber;
+            if (rawData.gender)      profilePayload.gender      = rawData.gender;
+            if (rawData.city)        profilePayload.city        = rawData.city;
+            if (rawData.about)       profilePayload.about       = rawData.about;
+            if (rawData.education)   profilePayload.education   = rawData.education;
+
+            // Tutor-only fields
+            if (role === "TUTOR") {
+                const d = rawData as typeof rawData & {
+                    hourlyRate: string;
+                    experience: string;
+                    subject: string;
+                    availableDays: string;
+                    availableTime: string;
+                };
+
+                if (d.hourlyRate) {
+                    profilePayload.hourlyRate = parseFloat(d.hourlyRate);
                 }
-            })
+                if (d.experience) {
+                    profilePayload.experience = parseInt(d.experience, 10);
+                }
+                if (d.subject) {
+                    profilePayload.subject = d.subject
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean);
+                }
+                if (d.availableDays) {
+                    profilePayload.availableDays = d.availableDays
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean);
+                }
+                if (d.availableTime) {
+                    profilePayload.availableTime = d.availableTime
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean);
+                }
+            }
+
+            if (Object.keys(profilePayload).length > 0) {
+                const updateFormData = new FormData();
+                updateFormData.append("data", JSON.stringify(profilePayload));
+
+                try {
+                    const updateRes = await fetch(`${BASE_URL}/users/update-profile`, {
+                        method: "PATCH",
+                        body: updateFormData,
+                        headers: { Authorization: token },
+                    });
+                    const updateResult = await updateRes.json();
+                    console.log("[register] profile update:", updateResult);
+                } catch (err) {
+                    // Non-fatal — user is registered, just profile update failed
+                    console.error("[register] profile update failed:", err);
+                }
+            }
+
+            // ── Set accessToken cookie ──────────────────────────────────────
+            const cookieStore = await cookies();
+            cookieStore.set("accessToken", token, {
+                httpOnly: true,
+                path: "/",
+                maxAge: 60 * 60 * 24 * 30, // 30 days
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "lax",
+            });
         }
 
-        return result;
+        return {
+            success: true,
+            message: "Account created successfully!",
+            role: rawData.role,
+        };
 
     } catch (error) {
-        console.error("User registration failed", error);
-        return { success: false, message: "Internal server error" };
+        console.error("[register] failed:", error);
+        return { success: false, message: "Internal server error. Please try again." };
     }
 }

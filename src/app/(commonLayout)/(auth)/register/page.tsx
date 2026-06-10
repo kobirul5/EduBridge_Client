@@ -1,92 +1,91 @@
-"use client";
-
 import RegistrationForm from "@/components/registration-form";
 import Link from "next/link";
-import { LucideArrowRight } from "lucide-react";
-import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { Suspense } from "react";
+import { LucideArrowLeft, LucideSparkles } from "lucide-react";
 
-const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
-
-const LOTTIE_URL = "/Login.json";
+export const metadata = {
+  title: "Create Account — EduBridge",
+  description: "Join EduBridge as a student or tutor and start your learning journey today.",
+};
 
 export default function RegisterPage() {
-  const [animationData, setAnimationData] = useState<unknown>(null);
-
-  useEffect(() => {
-    fetch(LOTTIE_URL)
-      .then((res) => res.json())
-      .then((data) => setAnimationData(data))
-      .catch((err) => console.error("Lottie fetch error:", err));
-  }, []);
-
   return (
-    <main className="min-h-screen bg-[linear-gradient(180deg,var(--background),var(--secondary))] px-4 py-8 text-foreground sm:px-6 lg:px-8">
-      <div className="mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-6xl overflow-hidden border border-border/70 bg-card/70 shadow-[0_24px_70px_-48px_color-mix(in_oklch,var(--primary)_45%,transparent)] backdrop-blur lg:grid-cols-[0.92fr_1.08fr]">
-        <section className="hidden min-h-[720px] flex-col justify-between border-r border-border/70 bg-secondary/30 p-10 lg:flex">
-          <div className="max-w-md space-y-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
-              EduBridge
-            </p>
-            <h1 className="text-4xl font-semibold leading-tight tracking-tight">
-              Create a profile built for steady progress.
-            </h1>
-            <p className="text-base leading-7 text-muted-foreground">
-              Set up your account once, then move between learning, users, and dashboard tools without friction.
-            </p>
-          </div>
+    <main className="relative min-h-screen overflow-hidden bg-background text-foreground flex items-center justify-center px-4 py-10">
+      {/* Background decorations */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] rounded-full bg-primary/8 blur-[120px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[300px] rounded-full bg-accent/6 blur-[100px]" />
+        <div className="absolute top-1/3 right-0 w-[300px] h-[300px] rounded-full bg-primary/5 blur-[80px]" />
+        {/* Grid pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.025]"
+          style={{
+            backgroundImage: `
+              linear-gradient(var(--border) 1px, transparent 1px),
+              linear-gradient(90deg, var(--border) 1px, transparent 1px)
+            `,
+            backgroundSize: "40px 40px",
+          }}
+        />
+      </div>
 
-          <div className="relative flex min-h-[360px] items-center justify-center">
-            <div className="absolute inset-x-10 bottom-4 h-24 bg-primary/10 blur-3xl" />
-            <div className="relative h-[360px] w-full">
-              {animationData ? (
-                <Lottie
-                  animationData={animationData}
-                  loop={true}
-                  className="h-full w-full"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center">
-                  <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary/20 border-t-primary" />
-                </div>
-              )}
+      <div className="w-full max-w-xl">
+        {/* Back link */}
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors mb-6 group"
+        >
+          <LucideArrowLeft size={13} className="transition-transform group-hover:-translate-x-0.5" />
+          Back to home
+        </Link>
+
+        {/* Card */}
+        <div className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-md shadow-[0_24px_80px_-20px_color-mix(in_oklch,var(--primary)_20%,transparent)]">
+          {/* Card header */}
+          <div className="px-7 pt-7 pb-5 border-b border-border/50">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-primary/15">
+                <LucideSparkles size={15} className="text-primary" />
+              </div>
+              <span className="text-xs font-black uppercase tracking-[0.2em] text-primary/80">
+                EduBridge
+              </span>
             </div>
-          </div>
-
-          <div className="border border-border/70 bg-card/70 p-5">
-            <p className="text-sm font-semibold">One account, clear access</p>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Your profile information stays aligned with the dashboard and protected routes.
+            <h1 className="text-2xl font-bold tracking-tight">Create your account</h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Join as a student to find tutors, or as a tutor to teach online.
             </p>
           </div>
-        </section>
 
-        <section className="flex items-center justify-center p-6 sm:p-10">
-          <div className="w-full max-w-2xl space-y-8">
-            <div className="space-y-2">
-              <p className="text-sm font-semibold text-primary">Get started</p>
-              <h2 className="text-3xl font-semibold tracking-tight">Create your account</h2>
-              <p className="text-sm leading-6 text-muted-foreground">
-                Add the basics now. You can refine the rest later.
-              </p>
-            </div>
-
-            <RegistrationForm />
-
-            <div className="border-t border-border/70 pt-6 text-center">
-              <p className="text-sm font-medium text-muted-foreground">
-                Already have an account?{" "}
-                <Link
-                  href="/login"
-                  className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
-                >
-                  Sign in
-                  <LucideArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
-                </Link>
-              </p>
-            </div>
+          {/* Form */}
+          <div className="px-7 py-6">
+            <Suspense fallback={<div className="h-48 flex items-center justify-center"><div className="w-8 h-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin" /></div>}>
+              <RegistrationForm />
+            </Suspense>
           </div>
-        </section>
+
+          {/* Card footer */}
+          <div className="px-7 py-5 border-t border-border/50 bg-muted/20 rounded-b-2xl">
+            <p className="text-center text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="font-bold text-primary hover:underline underline-offset-4 transition-colors"
+              >
+                Sign in
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        {/* Trust badges */}
+        <div className="flex items-center justify-center gap-6 mt-6 text-xs text-muted-foreground/60">
+          <span>🔒 Secure registration</span>
+          <span>·</span>
+          <span>✅ Free to join</span>
+          <span>·</span>
+          <span>🎓 1000+ tutors</span>
+        </div>
       </div>
     </main>
   );

@@ -6,20 +6,14 @@ import { getDefaultDashboardRoute, getRouteOwner, isAuthRoute, isPublicRoute, Us
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
 const normalizeTokenRole = (role: unknown): UserRole | null => {
-    if (role === "ADMIN") {
-        return "ADMIN";
+    if (role === "ADMIN" || role === "STUDENT" || role === "TUTOR") {
+        return role as UserRole;
     }
-
-    if (role === "USER") {
-        return "USER";
-    }
-
     return null;
-}
+};
 
 const clearAuthCookies = (response: NextResponse) => {
     response.cookies.set("accessToken", "", { path: "/", maxAge: 0 });
-    response.cookies.set("refreshToken", "", { path: "/", maxAge: 0 });
     return response;
 };
 
@@ -31,7 +25,6 @@ const isUserNotFoundResponse = async (response: Response) => {
     if (response.status !== 404) {
         return false;
     }
-
     try {
         const payload = await response.json();
         return typeof payload?.message === "string" && payload.message.toLowerCase().includes("user not found");
@@ -43,8 +36,8 @@ const isUserNotFoundResponse = async (response: Response) => {
 
 export async function proxy(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
-    const isAuth = isAuthRoute(pathname)
-    const isPublic = isPublicRoute(pathname)
+    const isAuth = isAuthRoute(pathname);
+    const isPublic = isPublicRoute(pathname);
     const routerOwner = getRouteOwner(pathname);
 
     if (isPublic) {
@@ -69,8 +62,9 @@ export async function proxy(request: NextRequest) {
                 return redirectToLoginWithClearedAuth(request);
             }
 
+            // Optional: validate user still exists in DB
             if (typeof verifiedToken.id === "string") {
-                const userResponse = await fetch(`${BASE_URL}/users/${verifiedToken.id}`, {
+                const userResponse = await fetch(`${BASE_URL}/users/get-me`, {
                     method: "GET",
                     headers: {
                         Authorization: accessToken,
@@ -89,11 +83,11 @@ export async function proxy(request: NextRequest) {
         }
     }
 
+    // No token → allow auth pages, redirect others to login
     if (!accessToken) {
         if (isAuth) {
             return NextResponse.next();
         }
-
         const loginUrl = new URL("/login", request.url);
         loginUrl.searchParams.set("redirect", pathname);
         return NextResponse.redirect(loginUrl);
@@ -103,26 +97,31 @@ export async function proxy(request: NextRequest) {
         return redirectToLoginWithClearedAuth(request);
     }
 
-    // Logged-in users should not see auth routes.
+    // Logged-in users should not see auth routes
     if (isAuth && userRole) {
-        return NextResponse.redirect(new URL(getDefaultDashboardRoute(userRole), request.url))
+        return NextResponse.redirect(new URL(getDefaultDashboardRoute(userRole), request.url));
     }
 
-    // Rule 3 : User is trying to access common protected route
+    // Common protected route (any authenticated user)
     if (routerOwner === "COMMON") {
         return NextResponse.next();
     }
 
-    // Rule 4 : User is trying to access role based protected route
-    if (routerOwner === "ADMIN" || routerOwner === "USER") {
-        if (userRole !== routerOwner) {
-            return NextResponse.redirect(new URL(getDefaultDashboardRoute(userRole), request.url))
+    // Role-based protected route
+    if (routerOwner === "ADMIN") {
+        if (userRole !== "ADMIN") {
+            return NextResponse.redirect(new URL(getDefaultDashboardRoute(userRole), request.url));
+        }
+    }
+
+    if (routerOwner === "USER") {
+        if (userRole !== "STUDENT" && userRole !== "TUTOR") {
+            return NextResponse.redirect(new URL(getDefaultDashboardRoute(userRole), request.url));
         }
     }
 
     return NextResponse.next();
 }
-
 
 
 export const config = {
@@ -135,6 +134,6 @@ export const config = {
          * - favicon.ico, sitemap.xml, robots.txt (metadata files)
          * - public assets with file extensions
          */
-        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.well-known|.*\\..*).*)',
+        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|.well-known|.*\\..*).*)' ,
     ],
 }
