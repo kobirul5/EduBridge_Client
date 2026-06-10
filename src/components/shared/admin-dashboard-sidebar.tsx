@@ -20,10 +20,10 @@ export default function AdminDashboardSidebar({ user }: { user?: AdminSidebarUse
   const userRole = user?.role || "Admin";
 
   return (
-    <aside className="sticky top-0 h-screen border-r border-black/5 bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(247,240,231,0.96))] px-5 py-6 shadow-[18px_0_45px_-40px_rgba(95,76,55,0.35)]">
+    <aside className="sticky top-0 h-screen border-r border-sidebar-border bg-[linear-gradient(180deg,color-mix(in_oklch,var(--sidebar)_94%,transparent),color-mix(in_oklch,var(--secondary)_96%,transparent))] px-5 py-6 shadow-[18px_0_45px_-40px_color-mix(in_oklch,var(--primary)_35%,transparent)]">
       <div className="flex h-full flex-col">
-        <div className="flex items-center gap-3 rounded-[1.75rem] bg-white/85  ">
-          <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-[1.35rem] bg-white shadow-[inset_0_0_0_1px_rgba(95,76,55,0.08)]">
+        <div className="flex items-center gap-3 rounded-[1.75rem] bg-card/85  ">
+          <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-[1.35rem] bg-card shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--primary)_8%,transparent)]">
             <Image
               src="/assets/logo.png"
               alt="EduBridge logo"
@@ -51,7 +51,7 @@ export default function AdminDashboardSidebar({ user }: { user?: AdminSidebarUse
                 href="/admin/dashboard"
                 className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all ${
                   pathname === "/admin/dashboard"
-                    ? "bg-primary text-primary-foreground shadow-[0_18px_35px_-25px_rgba(109,87,67,0.55)]"
+                    ? "bg-primary text-primary-foreground shadow-[0_18px_35px_-25px_color-mix(in_oklch,var(--primary)_55%,transparent)]"
                     : "text-muted-foreground hover:bg-primary/8 hover:text-foreground"
                 }`}
               >
@@ -62,9 +62,9 @@ export default function AdminDashboardSidebar({ user }: { user?: AdminSidebarUse
           </div>
         </nav>
 
-        <div className="mt-4 rounded-[1.55rem]  shadow-[0_18px_45px_-35px_rgba(95,76,55,0.28)]">
+        <div className="mt-4 rounded-[1.55rem]  shadow-[0_18px_45px_-35px_color-mix(in_oklch,var(--primary)_28%,transparent)]">
           <div className="flex items-center gap-3">
-            <div className="relative h-12 w-12 overflow-hidden rounded-full bg-[linear-gradient(135deg,#ead8c2,#c7a783)]">
+            <div className="relative h-12 w-12 overflow-hidden rounded-full bg-[linear-gradient(135deg,var(--secondary),var(--primary))]">
               {user?.profileImage ? (
                 <Image
                   src={user.profileImage}

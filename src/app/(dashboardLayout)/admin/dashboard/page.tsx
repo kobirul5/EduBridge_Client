@@ -91,7 +91,7 @@ export default async function Page() {
 
   if (!dashboard || !stats) {
     return (
-      <div className="rounded-[1.8rem] border border-dashed border-border/70 bg-white/80 p-10 text-center">
+      <div className="rounded-[1.8rem] border border-dashed border-border/70 bg-card/80 p-10 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/70">
           Dashboard Home
         </p>
@@ -128,7 +128,7 @@ export default async function Page() {
           return (
             <div
               key={card.label}
-              className="rounded-[1.5rem] border border-black/5 bg-white/92 p-4 shadow-[0_18px_40px_-35px_rgba(95,76,55,0.32)]"
+              className="rounded-[1.5rem] border border-border/60 bg-card/92 p-4 shadow-[0_18px_40px_-35px_color-mix(in_oklch,var(--primary)_32%,transparent)]"
             >
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-medium text-muted-foreground">{card.label}</p>
@@ -143,7 +143,7 @@ export default async function Page() {
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[1.35fr_0.9fr]">
-        <section className="rounded-[1.8rem] border border-black/5 bg-white/92 p-5 shadow-[0_18px_40px_-35px_rgba(95,76,55,0.32)]">
+        <section className="rounded-[1.8rem] border border-border/60 bg-card/92 p-5 shadow-[0_18px_40px_-35px_color-mix(in_oklch,var(--primary)_32%,transparent)]">
           <div className="flex items-center justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/70">
@@ -156,7 +156,7 @@ export default async function Page() {
             </div>
           </div>
 
-          <div className="mt-5 overflow-hidden rounded-[1.4rem] border border-black/5">
+          <div className="mt-5 overflow-hidden rounded-[1.4rem] border border-border/60">
             <div className="grid grid-cols-[88px_minmax(0,1.2fr)_minmax(0,1.5fr)_120px] gap-3 bg-primary/8 px-4 py-3 text-xs font-semibold uppercase tracking-[0.16em] text-primary/80">
               <span>ID</span>
               <span>User Name</span>
@@ -164,7 +164,7 @@ export default async function Page() {
               <span>Status</span>
             </div>
 
-            <div className="divide-y divide-black/5">
+            <div className="divide-y divide-border/60">
               {users.map((user) => (
                 <div
                   key={user.id}
@@ -185,7 +185,7 @@ export default async function Page() {
         </section>
 
         <section className="space-y-5">
-          <div className="rounded-[1.8rem] border border-black/5 bg-white/92 p-5 shadow-[0_18px_40px_-35px_rgba(95,76,55,0.32)]">
+          <div className="rounded-[1.8rem] border border-border/60 bg-card/92 p-5 shadow-[0_18px_40px_-35px_color-mix(in_oklch,var(--primary)_32%,transparent)]">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/70">
               User Mix
             </p>
@@ -217,24 +217,24 @@ export default async function Page() {
             </div>
           </div>
 
-          <div className="rounded-[1.8rem] border border-black/5 bg-[linear-gradient(180deg,rgba(109,87,67,0.1),rgba(109,87,67,0.04))] p-5 shadow-[0_18px_40px_-35px_rgba(95,76,55,0.32)]">
+          <div className="rounded-[1.8rem] border border-border/60 bg-[linear-gradient(180deg,color-mix(in_oklch,var(--primary)_10%,transparent),color-mix(in_oklch,var(--primary)_4%,transparent))] p-5 shadow-[0_18px_40px_-35px_color-mix(in_oklch,var(--primary)_32%,transparent)]">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/70">
               Sales Snapshot
             </p>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-              <div className="rounded-[1.4rem] bg-white/85 p-4">
+              <div className="rounded-[1.4rem] bg-card/85 p-4">
                 <p className="text-sm text-muted-foreground">Coin Sales</p>
                 <p className="mt-2 text-2xl font-semibold text-foreground">
                   {formatNumber(stats.totalCoinSales)}
                 </p>
               </div>
-              <div className="rounded-[1.4rem] bg-white/85 p-4">
+              <div className="rounded-[1.4rem] bg-card/85 p-4">
                 <p className="text-sm text-muted-foreground">Gift Cards</p>
                 <p className="mt-2 text-2xl font-semibold text-foreground">
                   {formatNumber(stats.totalGiftCard)}
                 </p>
               </div>
-              <div className="rounded-[1.4rem] bg-white/85 p-4">
+              <div className="rounded-[1.4rem] bg-card/85 p-4">
                 <p className="text-sm text-muted-foreground">Total Revenue</p>
                 <p className="mt-2 text-2xl font-semibold text-foreground">
                   {formatCurrency(stats.totalRevenue)}

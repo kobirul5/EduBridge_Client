@@ -93,7 +93,7 @@ export default function LoginForm({ quickLoginUser, quickLoginAdmin }: QuickLogi
             <Button 
               type="button"
               onClick={() => handleQuickLogin(quickLoginUser.email, quickLoginUser.password)}
-              className="flex-1 h-11 font-bold rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 border border-blue-500/20 transition-all"
+              className="flex-1 h-11 font-bold rounded-xl bg-secondary/70 hover:bg-secondary text-secondary-foreground border border-border/60 transition-all"
             >
               <User className="mr-2 h-4 w-4" />
               User
@@ -103,7 +103,7 @@ export default function LoginForm({ quickLoginUser, quickLoginAdmin }: QuickLogi
             <Button
               type="button"
               onClick={() => handleQuickLogin(quickLoginAdmin.email, quickLoginAdmin.password)}
-              className="flex-1 h-11 font-bold rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 border border-purple-500/20 transition-all"
+              className="flex-1 h-11 font-bold rounded-xl bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 transition-all"
             >
               <Shield className="mr-2 h-4 w-4" />
               Admin

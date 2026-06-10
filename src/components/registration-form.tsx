@@ -46,7 +46,7 @@ export default function RegistrationForm() {
   return (
     <form action={formAction} className="space-y-4">
       {state?.success === false && state?.message && (
-        <div className="p-3 bg-red-100 text-red-600 rounded-md text-sm border border-red-200">
+        <div className="p-3 bg-destructive/10 text-destructive rounded-md text-sm border border-destructive/20">
           {state.message}
         </div>
       )}
@@ -63,7 +63,7 @@ export default function RegistrationForm() {
                 name="firstName" 
                 placeholder="John" 
                 disabled={isPending} 
-                className="pl-12 h-12 bg-white/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
+                className="pl-12 h-12 bg-card/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
               />
             </FieldContent>
             {getFieldError("firstName") && (
@@ -82,7 +82,7 @@ export default function RegistrationForm() {
                 name="lastName" 
                 placeholder="Doe" 
                 disabled={isPending} 
-                className="pl-12 h-12 bg-white/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
+                className="pl-12 h-12 bg-card/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
               />
             </FieldContent>
             {getFieldError("lastName") && (
@@ -105,7 +105,7 @@ export default function RegistrationForm() {
               type="email"
               placeholder="john@example.com"
               disabled={isPending}
-              className="pl-12 h-12 bg-white/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
+              className="pl-12 h-12 bg-card/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
             />
           </FieldContent>
           {getFieldError("email") && (
@@ -125,7 +125,7 @@ export default function RegistrationForm() {
                 name="phoneNumber"
                 placeholder="+1234567890"
                 disabled={isPending}
-                className="pl-12 h-12 bg-white/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
+                className="pl-12 h-12 bg-card/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
               />
             </FieldContent>
             {getFieldError("phoneNumber") && (
@@ -145,7 +145,7 @@ export default function RegistrationForm() {
                 type="number"
                 placeholder="25"
                 disabled={isPending}
-                className="pl-12 h-12 bg-white/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
+                className="pl-12 h-12 bg-card/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
               />
             </FieldContent>
             {getFieldError("age") && (
@@ -165,7 +165,7 @@ export default function RegistrationForm() {
               name="gender"
               disabled={isPending}
               className={cn(
-                "flex h-12 w-full rounded-xl border border-border/50 bg-white/50 pl-12 pr-3 py-1 text-sm shadow-sm transition-all focus:border-primary/50 focus:ring-primary/20 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 appearance-none font-medium text-foreground/80",
+                "flex h-12 w-full rounded-xl border border-border/50 bg-card/50 pl-12 pr-3 py-1 text-sm shadow-sm transition-all focus:border-primary/50 focus:ring-primary/20 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 appearance-none font-medium text-foreground/80",
               )}
             >
               <option value="">Select Gender</option>
@@ -193,7 +193,7 @@ export default function RegistrationForm() {
               name="address"
               placeholder="123 Main St, City"
               disabled={isPending}
-              className="pl-12 h-12 bg-white/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
+              className="pl-12 h-12 bg-card/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
             />
           </FieldContent>
           {getFieldError("address") && (
@@ -216,7 +216,7 @@ export default function RegistrationForm() {
                 type="password"
                 placeholder="••••••••"
                 disabled={isPending}
-                className="pl-12 h-12 bg-white/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
+                className="pl-12 h-12 bg-card/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
               />
             </FieldContent>
             {getFieldError("password") && (
@@ -238,7 +238,7 @@ export default function RegistrationForm() {
                 type="password"
                 placeholder="••••••••"
                 disabled={isPending}
-                className="pl-12 h-12 bg-white/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
+                className="pl-12 h-12 bg-card/50 border-border/50 focus:border-primary/50 focus:ring-primary/20 rounded-xl transition-all font-medium"
               />
             </FieldContent>
             {getFieldError("confirmPassword") && (
