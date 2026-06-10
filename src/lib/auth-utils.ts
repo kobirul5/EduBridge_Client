@@ -10,6 +10,7 @@ export type RouteConfig = {
 export const authRoutes = [
     "/login",
     "/register",
+    "/verify-otp",
 ];
 
 export const publicRoutes = [
