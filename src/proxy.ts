@@ -62,7 +62,7 @@ export async function proxy(request: NextRequest) {
                 return redirectToLoginWithClearedAuth(request);
             }
 
-            // Optional: validate user still exists in DB
+            // Optional: validate user still exists in DB and check emailVerified
             if (typeof verifiedToken.id === "string") {
                 const userResponse = await fetch(`${BASE_URL}/users/get-me`, {
                     method: "GET",
@@ -75,6 +75,18 @@ export async function proxy(request: NextRequest) {
 
                 if (userResponse.status === 401 || (await isUserNotFoundResponse(userResponse.clone()))) {
                     return redirectToLoginWithClearedAuth(request);
+                }
+
+                try {
+                    const profileRes = await userResponse.json();
+                    if (profileRes?.data && profileRes.data.emailVerified === false) {
+                        const verifyUrl = new URL("/verify-otp", request.url);
+                        verifyUrl.searchParams.set("email", profileRes.data.email || "");
+                        verifyUrl.searchParams.set("role", profileRes.data.role || "");
+                        return NextResponse.redirect(verifyUrl);
+                    }
+                } catch (err) {
+                    console.error("Error reading profile in proxy:", err);
                 }
             }
         } catch (error) {

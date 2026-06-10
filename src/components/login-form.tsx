@@ -30,7 +30,7 @@ export default function LoginForm({ quickLoginUser, quickLoginAdmin }: QuickLogi
 
   useEffect(() => {
     if (state?.success) {
-      if (state.data?.isVerified) {
+      if (state.data?.emailVerified) {
         toast.success("Login successful!", {
           description: "Welcome back!",
         });
@@ -38,14 +38,11 @@ export default function LoginForm({ quickLoginUser, quickLoginAdmin }: QuickLogi
       } else {
         // Redirection for unverified users
         const email = state?.data?.email || "";
-        if (email) {
-          sessionStorage.setItem("resetEmail", email);
-          sessionStorage.setItem("otpType", "verify");
-        }
+        const role = state?.data?.role || "";
         toast.info("Email verification required", {
           description: "Please verify your email to continue.",
         });
-        router.push("/verify-otp");
+        router.push(`/verify-otp?email=${encodeURIComponent(email)}&role=${encodeURIComponent(role)}`);
       }
     } else if (state?.errors && state.errors.length > 0) {
       const errorMessage = state.errors
@@ -186,4 +183,3 @@ export default function LoginForm({ quickLoginUser, quickLoginAdmin }: QuickLogi
     </>
   );
 }
-
