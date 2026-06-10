@@ -189,20 +189,12 @@ export const registerUser = async (_currentState: any, formData: FormData): Prom
                 }
             }
 
-            // ── Set accessToken cookie ──────────────────────────────────────
-            const cookieStore = await cookies();
-            cookieStore.set("accessToken", token, {
-                httpOnly: true,
-                path: "/",
-                maxAge: 60 * 60 * 24 * 30, // 30 days
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "lax",
-            });
         }
 
         return {
             success: true,
-            message: "Account created successfully!",
+            needsOtpVerification: true,
+            email: rawData.email,
             role: rawData.role,
         };
 

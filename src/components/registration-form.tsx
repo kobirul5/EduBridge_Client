@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useActionState, useEffect, useState } from "react";
 import { registerUser } from "@/services/auth/register";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 import {
   LucideMail,
   LucidePhone,
@@ -151,8 +152,33 @@ export default function RegistrationForm() {
   const [state, formAction, isPending] = useActionState(registerUser, null);
 
   useEffect(() => {
-    if (state?.success) {
-      router.push(role === "TUTOR" ? "/dashboard/tutor" : "/dashboard/student");
+    if (!state) return;
+
+    if (state.success) {
+      if (state.needsOtpVerification) {
+        toast.info("Verification required", {
+          description: "An OTP has been sent to your email. Please verify to complete registration.",
+        });
+        router.push(`/verify-otp?email=${encodeURIComponent(state.email)}&role=${encodeURIComponent(state.role)}`);
+      } else {
+        toast.success("Registration successful!", {
+          description: "Welcome to EduBridge!",
+        });
+        router.push(role === "TUTOR" ? "/dashboard/tutor" : "/dashboard/student");
+      }
+    } else if (state.errors && state.errors.length > 0) {
+      const firstError = state.errors[0]?.message || "Please correct the errors in the form.";
+      toast.error("Registration failed", {
+        description: firstError,
+      });
+    } else if (state.message) {
+      toast.error("Registration failed", {
+        description: state.message,
+      });
+    } else {
+      toast.error("Registration failed", {
+        description: "An unexpected error occurred. Please try again.",
+      });
     }
   }, [state, role, router]);
 
@@ -165,13 +191,7 @@ export default function RegistrationForm() {
 
   return (
     <form action={formAction} className="space-y-5">
-      {/* Global error */}
-      {state?.success === false && state?.message && (
-        <div className="flex items-start gap-2.5 p-3.5 bg-destructive/10 text-destructive rounded-xl border border-destructive/20 text-sm font-semibold">
-          <span className="mt-0.5 shrink-0">⚠</span>
-          <span>{state.message}</span>
-        </div>
-      )}
+
 
       {/* ── ROLE SELECTION ──────────────────────────────────────────────── */}
       <SectionTitle icon={LucideUser} title="I am a" />
